@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-genetic risk factor of allopurinol hypersensitivity score with or without uric acid information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"], input[type="text"] {
+            width: calc(50% - 5px);
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            display: none; /* Hide by default */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Non-genetic risk factor of allopurinol hypersensitivity score</h2>
+        <div class="input-group">
+            <label for="female">Female:</label>
+            <input type="radio" id="female_yes" name="female" value="1"> Yes
+            <input type="radio" id="female_no" name="female" value="0" checked> No
+        </div>
+        <div class="input-group">
+            <label for="age">Age:</label>
+            <input type="number" id="age">
+        </div>
+        <div class="input-group">
+            <label for="creatinine">Serum Creatinine (mg/dL):</label>
+            <input type="number" id="creatinine">
+        </div>
+        <div class="input-group">
+            <label for="mdrd">MDRD eGFR (mL/min/1.73 m²):</label>
+            <input type="text" id="mdrd" readonly>
+        </div>
+        <div class="input-group">
+            <label for="african_american">African American:</label>
+            <input type="radio" id="african_american_yes" name="african_american" value="1"> Yes
+            <input type="radio" id="african_american_no" name="african_american" value="0" checked> No
+        </div>
+        <div class="input-group">
+            <label for="diuretic">Furosemide and/or Hydrochlorothiazide concomitant:</label>
+            <input type="radio" id="diuretic_yes" name="diuretic" value="1"> Yes
+            <input type="radio" id="diuretic_no" name="diuretic" value="0" checked> No
+        </div>
+        <div class="input-group">
+            <label for="allo_dose">Allopurinol Dose (mg/day):</label>
+            <input type="number" id="allo_dose">
+        </div>
+        <div class="input-group">
+            <label for="sua">Serum Uric Acid (mg/dL):</label>
+            <input type="number" id="sua">
+        </div>
+        <div class="result" id="model1a"></div>
+        <div class="result" id="model1b"></div>
+        <div class="result" id="model2"></div>
+        <br> <!-- Add space here -->
+        <div class="recommendation" id="recommendation"></div>
+    </div>
+
+    <script>
+        function calculateProbability() {
+            var female = parseFloat(document.querySelector('input[name="female"]:checked').value);
+            var age = parseFloat(document.getElementById('age').value);
+            var creatinine = parseFloat(document.getElementById('creatinine').value);
+            var african_american = parseFloat(document.querySelector('input[name="african_american"]:checked').value);
+            var diuretic = parseFloat(document.querySelector('input[name="diuretic"]:checked').value);
+            var allo_dose = parseFloat(document.getElementById('allo_dose').value);
+            var sua = parseFloat(document.getElementById('sua').value);
+
+            var age_65 = age >= 65 ? 1 : 0; // Classify age
+
+            // Display MDRD eGFR
+            document.getElementById('mdrd').value = calculateMDRD(creatinine, age, female, african_american).toFixed(2);
+
+            // Calculate probabilities
+            var model1a = calculateModel1a(female, age_65, diuretic);
+            var model1b = calculateModel1b(female, age_65, diuretic, sua);
+            var model2 = calculateModel2(female, age_65, allo_dose, diuretic);
+
+            // Display probabilities
+            displayProbability(model1a, model1b, model2);
+
+            // Display recommendation based on available probabilities
+            displayRecommendation(model1a, model1b, model2);
+        }
+
+        function calculateModel1a(female, age_65, diuretic) {
+            return Math.exp(1.250165 * female + 0.0638349 * age_65 - 0.4269041 * diuretic - 6.421989) / (1 + Math.exp(1.250165 * female + 0.0638349 * age_65 - 0.4269041 * diuretic - 6.421989));
+        }
+
+        function calculateModel1b(female, age_65, diuretic, sua) {
+            return Math.exp(0.8456204 * female + 0.4766383 * age_65 + 0.1819375 * sua + 2.034854 * diuretic - 7.969009) / (1 + Math.exp(0.8456204 * female + 0.4766383 * age_65 + 0.1819375 * sua + 2.034854 * diuretic - 7.969009));
+        }
+
+        function calculateModel2(female, age_65, allo_dose, diuretic) {
+            return Math.exp(1.2303453316 * female + 0.4373190417 * age_65 + 0.0144714635 * allo_dose + 1.0091512690 * diuretic - 8.6836693360) / (1 + Math.exp(1.2303453316 * female + 0.4373190417 * age_65 + 0.0144714635 * allo_dose + 1.0091512690 * diuretic - 8.6836693360));
+        }
+
+        function calculateMDRD(creatinine, age, female, african_american) {
+            var gender_factor = (female == 1) ? 0.742 : 1;
+            var race_factor = (african_american == 1) ? 1.212 : 1;
+            return 175 * Math.pow(creatinine, -1.154) * Math.pow(age, -0.203) * gender_factor * race_factor;
+        }
+
+        function displayProbability(model1a, model1b, model2) {
+            // Display probabilities
+            document.getElementById('model1a').style.display = !isNaN(model1a) && isNaN(model2) ? 'block' : 'none';
+            document.getElementById('model1b').style.display = !isNaN(model1b) && isNaN(model2) ? 'block' : 'none';
+            document.getElementById('model2').style.display = !isNaN(model2) ? 'block' : 'none';
+
+            if (!isNaN(model1a)) document.getElementById('model1a').innerHTML = "Model 1a Probability: " + model1a.toFixed(7);
+            if (!isNaN(model1b)) document.getElementById('model1b').innerHTML = "Model 1b Probability: " + model1b.toFixed(7);
+            if (!isNaN(model2)) document.getElementById('model2').innerHTML = "Model 2 Probability: " + model2.toFixed(7);
+        }
+
+        function displayRecommendation(model1a, model1b, model2) {
+            var recommendation1 = "Low risk of severe AH. Start allopurinol without genetic testing.";
+            var recommendation2 = "Moderate risk of severe AH. Suggest genetic testing.";
+            var recommendation3 = "High risk of severe AH. Start other urate-lowering therapy without genetic testing.";
+
+            // Display recommendation based on available probabilities
+            if (!isNaN(model2)) {
+                document.getElementById('recommendation').innerHTML = (model2 >= 0 && model2 <= 0.01) ? recommendation1 : (model2 > 0.01 && model2 <= 0.02) ? recommendation2 : recommendation3;
+            } else {
+                // If model2 probability is not provided, use model1a and model1b probabilities
+                if (!isNaN(model1a) && !isNaN(model1b)) {
+                    var maxProbability = Math.max(model1a, model1b);
+                    document.getElementById('recommendation').innerHTML = (maxProbability >= 0 && maxProbability <= 0.01) ? recommendation1 : (maxProbability > 0.01 && maxProbability <= 0.02) ? recommendation2 : recommendation3;
+                } else if (!isNaN(model1a)) {
+                    document.getElementById('recommendation').innerHTML = (model1a >= 0 && model1a <= 0.01) ? recommendation1 : (model1a > 0.01 && model1a <= 0.02) ? recommendation2 : recommendation3;
+                } else if (!isNaN(model1b)) {
+                    document.getElementById('recommendation').innerHTML = (model1b >= 0 && model1b <= 0.01) ? recommendation1 : (model1b > 0.01 && model1b <= 0.02) ? recommendation2 : recommendation3;
+                }
+            }
+        }
+
+        // Attach event listeners to input fields to recalculate probability when they change
+        document.getElementById('female_yes').addEventListener('change', calculateProbability);
+        document.getElementById('female_no').addEventListener('change', calculateProbability);
+        document.getElementById('age').addEventListener('input', calculateProbability);
+        document.getElementById('creatinine').addEventListener('input', calculateProbability);
+        document.getElementById('african_american_yes').addEventListener('change', calculateProbability);
+        document.getElementById('african_american_no').addEventListener('change', calculateProbability);
+        document.getElementById('diuretic_yes').addEventListener('change', calculateProbability);
+        document.getElementById('diuretic_no').addEventListener('change', calculateProbability);
+        document.getElementById('allo_dose').addEventListener('input', calculateProbability);
+        document.getElementById('sua').addEventListener('input', calculateProbability);
+
+        // Calculate probability initially
+        calculateProbability();
+    </script>
+</body>
+</html>
