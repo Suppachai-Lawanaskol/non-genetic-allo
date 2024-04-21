@@ -199,27 +199,27 @@
             if (isNaN(sua) && isNaN(allo_dose)) {
                 model = "1a";
                 probability = calculateModel1a(female, age >= 65 ? 1 : 0, eGFR < 60 ? 1 : 0, diuretic);
-                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH. Start allopurinol without genetic testing." :
-                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. Genetic testing is required before the prescription" :
-                    "High non-genetic risk of severe AH. Start other urate-lowering therapy without genetic testing.";
+                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH, start allopurinol, HLA -B*58:01 genetic testing is recommended if available." :
+                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. HLA-B*58:01 genetic testing is required before allopurinol prescription." :
+                    "High non-genetic risk of severe AH. The HLA-B*58:01 genetic testing is required prior to allopurinol prescription or alter to use other urate-lowering therapy.";
             } else if (!isNaN(sua) && isNaN(allo_dose)) {
                 model = "1b";
                 probability = calculateModel1b(female, age >= 65 ? 1 : 0, eGFR < 60 ? 1 : 0, diuretic, sua);
-                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH. Start allopurinol without genetic testing." :
-                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. Genetic testing is required before the prescription" :
-                    "High non-genetic risk of severe AH. Start other urate-lowering therapy without genetic testing.";
+                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH, start allopurinol, HLA -B*58:01 genetic testing is recommended if available." :
+                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. HLA-B*58:01 genetic testing is required before allopurinol prescription." :
+                    "High non-genetic risk of severe AH. The HLA-B*58:01 genetic testing is required prior to allopurinol prescription or alter to use other urate-lowering therapy.";
             } else if (isNaN(sua) && !isNaN(allo_dose)) {
                 model = "2";
                 probability = calculateModel2(female, age >= 65 ? 1 : 0, eGFR < 60 ? 1 : 0, allo_dose, diuretic);
-                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH. Start allopurinol without genetic testing." :
-                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. Genetic testing is required before the prescription" :
-                    "High non-genetic risk of severe AH. Start other urate-lowering therapy without genetic testing.";
+                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH, start allopurinol, HLA -B*58:01 genetic testing is recommended if available." :
+                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. HLA-B*58:01 genetic testing is required before allopurinol prescription." :
+                    "High non-genetic risk of severe AH. The HLA-B*58:01 genetic testing is required prior to allopurinol prescription or alter to use other urate-lowering therapy.";
             } else if (!isNaN(sua) && !isNaN(allo_dose)) {
                 model = "2";
                 probability = calculateModel2(female, age >= 65 ? 1 : 0, eGFR < 60 ? 1 : 0, allo_dose, diuretic);
-                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH. Start allopurinol without genetic testing." :
-                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. Genetic testing is required before the prescription" :
-                    "High non-genetic risk of severe AH. Start other urate-lowering therapy without genetic testing.";
+                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH, start allopurinol, HLA -B*58:01 genetic testing is recommended if available." :
+                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. HLA-B*58:01 genetic testing is required before allopurinol prescription." :
+                    "High non-genetic risk of severe AH. The HLA-B*58:01 genetic testing is required prior to allopurinol prescription or alter to use other urate-lowering therapy.";
             }
 
             displayResults(eGFR, model, probability, recommendation);
