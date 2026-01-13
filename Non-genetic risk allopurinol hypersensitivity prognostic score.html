@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-genetic risk allopurinol hypersensitivity prognostic score (NoG-ASCAR Score)</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="number"], input[type="text"] {
+            width: calc(50% - 5px);
+            padding: 8px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-top: 5px;
+        }
+        .radio-container {
+            display: flex;
+            justify-content: left;
+            margin-top: 5px;
+        }
+        .radio-container label {
+            margin-right: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .recommendation {
+            margin-top: 20px;
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        #egfr {
+            margin-top: 20px;
+            background-color: #d4edda;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        #egfr p {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+	.low-risk {
+        background-color: #d4edda; /* Green background */
+        color: #155724; /* Dark green text */
+    	}
+    	.moderate-risk {
+        background-color: #fff3cd; /* Yellow background */
+        color: #856404; /* Dark yellow text */
+    	}
+    	.high-risk {
+        background-color: #fd7e14; /* Orange background */
+        color: #fff; /* White text */
+    	}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Non-genetic risk allopurinol hypersensitivity prognostic score (NoG-ASCAR Score)</h2>
+        <div class="input-group">
+            <label for="female">Female:</label>
+            <div class="radio-container">
+                <label><input type="radio" id="female_yes" name="female" value="1"> Yes</label>
+                <label><input type="radio" id="female_no" name="female" value="0" checked> No</label>
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="age">Age:</label>
+            <input type="number" id="age" placeholder="Enter age">
+        </div>
+        <div class="input-group">
+            <label for="creatinine">Serum Creatinine (mg/dL):</label>
+            <input type="number" id="creatinine" placeholder="Enter serum creatinine">
+        </div>
+        <div class="input-group">
+            <label for="african_american">African American:</label>
+            <div class="radio-container">
+                <label><input type="radio" id="african_american_yes" name="african_american" value="1"> Yes</label>
+                <label><input type="radio" id="african_american_no" name="african_american" value="0" checked> No</label>
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="mdrd_egfr">MDRD eGFR:</label>
+            <input type="text" id="mdrd_egfr" readonly>
+        </div>
+        <div class="input-group">
+            <label for="diuretic">Furosemide and/or Hydrochlorothiazide concomitant:</label>
+            <div class="radio-container">
+                <label><input type="radio" id="diuretic_yes" name="diuretic" value="1"> Yes</label>
+                <label><input type="radio" id="diuretic_no" name="diuretic" value="0" checked> No</label>
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="allo_dose">Allopurinol Starting Dose (mg/day):</label>
+            <input type="number" id="allo_dose" placeholder="Enter allopurinol dose">
+        </div>
+        <div class="input-group">
+            <label for="sua">Serum Uric Acid (mg/dL):</label>
+            <input type="number" id="sua" placeholder="Enter serum uric acid">
+        </div>
+        <div class="result" id="model"></div>
+        <div class="recommendation" id="recommendation"></div>
+    </div>
+
+  <!-- LaTeX equations -->
+    <div>
+        <h2>Model 1a</h2>
+        <div>
+            \[ \text{Probability by model 1a} = \frac{{e^{1.295327 \times \text{female} - 0.0140479 \times \text{age} - 0.0171667 \times \text{mdrd} - 0.4593728 \times \text{diuretic} -4.044362}}}{{e^{1.295327 \times \text{female} - 0.0140479 \times \text{age} - 0.0171667 \times \text{mdrd} - 0.4593728 \times \text{diuretic} -4.044362} + 1}} \]
+        </div>
+    </div>
+
+    <div>
+        <h2>Model 1b</h2>
+        <div>
+            \[ \text{Probability by model 1b} = \frac{{e^{0.8150534 \times \text{female} + 0.0162546 \times \text{age} - 0.0060181 \times \text{mdrd} + 0.1772109 \times \text{sua} + 2.020398 \times \text{diuretic} -8.196047}}}{{e^{0.8150534 \times \text{female} + 0.0162546 \times \text{age} - 0.0060181 \times \text{mdrd} + 0.1772109 \times \text{sua} + 2.020398 \times \text{diuretic} -8.196047} + 1}} \]
+
+    </div>
+
+    <div>
+        <h2>Model 2</h2>
+        <div>
+            \[ \text{Probability by model 2} = \frac{{e^{1.191076 \times \text{female} + 0.0071005 \times \text{age} - 0.0216015 \times \text{mdrd} + 0.0145356 \times \text{allo_dose} + 0.9388491 \times \text{diuretic} - 7.109544}}}{{e^{1.191076 \times \text{female} + 0.0071005 \times \text{age} - 0.0216015 \times \text{mdrd} + 0.0145356 \times \text{allo_dose} + 0.9388491 \times \text{diuretic} - 7.109544} + 1}} \]
+        </div>
+
+
+    <script>
+        // Function to calculate Model 1a probability
+       function calculateModel1a(female, age, mdrd, diuretic) {
+            var numerator = Math.exp(1.295327 * female - 0.0140479 * age - 0.0171667 * mdrd - 0.4593728 * diuretic - 4.044362);
+            return numerator / (numerator + 1);
+        }
+
+        // Function to calculate Model 1b probability
+        function calculateModel1b(female, age, mdrd, diuretic, sua) {
+            var numerator = Math.exp(0.8150534 * female + 0.0162546 * age - 0.0060181 * mdrd + 0.1772109 * sua + 2.020398 * diuretic -8.196047);
+            return numerator / (numerator + 1);
+        }
+
+        // Function to calculate Model 2 probability
+        function calculateModel2(female, age, mdrd, allo_dose, diuretic) {
+            var numerator = Math.exp(1.191076 * female + 0.0071005 * age - 0.0216015 * mdrd + 0.0145356 * allo_dose + 1.9388491 * diuretic - 7.109544);
+            return numerator / (numerator + 1);
+        }
+
+        // Function to calculate eGFR using MDRD equation
+        function calculateMDRD(age, creatinine, female, african_american) {
+            return 175 * Math.pow(creatinine, -1.154) * Math.pow(age, -0.203) * Math.pow(0.742, female) * Math.pow(1.21, african_american);
+        }
+
+        // Function to display results
+        function displayResults(eGFR, model, probability, recommendation) {
+            document.getElementById('mdrd_egfr').value = eGFR.toFixed(2) + " mL/min/1.73m²";
+            document.getElementById('recommendation').innerHTML = recommendation;
+            if (!isNaN(probability)) {
+                document.getElementById('model').innerHTML = "<p>Probability (Model " + model + "): " + (probability * 100).toFixed(2) + "%</p>";
+            }
+        }
+
+ // Function to generate recommendation based on probability and apply color
+        function getRecommendation(probability) {
+            let recommendationText = "";
+            let recommendationClass = "";
+
+            if (probability >= 0 && probability <= 0.01) {
+                recommendationText = "Low non-genetic risk of severe AH. Start allopurinol, HLA -B*58:01 genetic testing is recommended if available.";
+                recommendationClass = "low-risk"; // Green background for low risk
+            } else if (probability > 0.01 && probability <= 0.02) {
+                recommendationText = "Moderate non-genetic risk of severe AH. HLA-B*58:01 genetic testing is required before allopurinol prescription.";
+                recommendationClass = "moderate-risk"; // Yellow background for moderate risk
+            } else {
+                recommendationText = "High non-genetic risk of severe AH. The HLA-B*58:01 genetic testing is required prior to allopurinol prescription or alter to use other urate-lowering therapy.";
+                recommendationClass = "high-risk"; // Orange background for high risk
+            }
+
+            // Set the recommendation text and apply the corresponding color class
+            document.getElementById('recommendation').innerHTML = recommendationText;
+            document.getElementById('recommendation').className = "recommendation " + recommendationClass;
+        }
+
+
+
+
+        // Function to calculate and display results
+        function calculateAndDisplay() {
+            var female = parseFloat(document.querySelector('input[name="female"]:checked').value);
+            var age = parseFloat(document.getElementById('age').value);
+            var creatinine = parseFloat(document.getElementById('creatinine').value);
+            var african_american = parseFloat(document.querySelector('input[name="african_american"]:checked').value);
+            var diuretic = parseFloat(document.querySelector('input[name="diuretic"]:checked').value);
+            var allo_dose = parseFloat(document.getElementById('allo_dose').value);
+            var sua = parseFloat(document.getElementById('sua').value);
+
+            var eGFR = calculateMDRD(age, creatinine, female, african_american);
+            var model, probability;
+            var recommendation = "";
+
+            if (isNaN(sua) && isNaN(allo_dose)) {
+                model = "1a";
+                probability = calculateModel1a(female, age, eGFR, diuretic);
+                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH, start allopurinol, HLA -B*58:01 genetic testing is recommended if available." :
+                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. HLA-B*58:01 genetic testing is required before allopurinol prescription." :
+                    "High non-genetic risk of severe AH. The HLA-B*58:01 genetic testing is required prior to allopurinol prescription or alter to use other urate-lowering therapy.";
+            } else if (!isNaN(sua) && isNaN(allo_dose)) {
+                model = "1b";
+                probability = calculateModel1b(female, age, eGFR, diuretic, sua);
+                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH, start allopurinol, HLA -B*58:01 genetic testing is recommended if available." :
+                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. HLA-B*58:01 genetic testing is required before allopurinol prescription." :
+                    "High non-genetic risk of severe AH. The HLA-B*58:01 genetic testing is required prior to allopurinol prescription or alter to use other urate-lowering therapy.";
+            } else if (isNaN(sua) && !isNaN(allo_dose)) {
+                model = "2";
+                probability = calculateModel2(female, age, eGFR, allo_dose, diuretic);
+                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH, start allopurinol, HLA -B*58:01 genetic testing is recommended if available." :
+                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. HLA-B*58:01 genetic testing is required before allopurinol prescription." :
+                    "High non-genetic risk of severe AH. The HLA-B*58:01 genetic testing is required prior to allopurinol prescription or alter to use other urate-lowering therapy.";
+            } else if (!isNaN(sua) && !isNaN(allo_dose)) {
+                model = "2";
+                probability = calculateModel2(female, age, eGFR, allo_dose, diuretic);
+                recommendation = (probability >= 0 && probability <= 0.01) ? "Low non-genetic risk of severe AH, start allopurinol, HLA -B*58:01 genetic testing is recommended if available." :
+                    (probability > 0.01 && probability <= 0.02) ? "Moderate non-genetic risk of severe AH. HLA-B*58:01 genetic testing is required before allopurinol prescription." :
+                    "High non-genetic risk of severe AH. The HLA-B*58:01 genetic testing is required prior to allopurinol prescription or alter to use other urate-lowering therapy.";
+            }
+
+            displayResults(eGFR, model, probability, recommendation);
+	    getRecommendation(probability);
+        }
+
+        // Attach event listeners to input fields to recalculate and display results when they change
+        document.getElementById('female_yes').addEventListener('change', calculateAndDisplay);
+        document.getElementById('female_no').addEventListener('change', calculateAndDisplay);
+        document.getElementById('age').addEventListener('input', calculateAndDisplay);
+        document.getElementById('creatinine').addEventListener('input', calculateAndDisplay);
+        document.getElementById('african_american_yes').addEventListener('change', calculateAndDisplay);
+        document.getElementById('african_american_no').addEventListener('change', calculateAndDisplay);
+        document.getElementById('diuretic_yes').addEventListener('change', calculateAndDisplay);
+        document.getElementById('diuretic_no').addEventListener('change', calculateAndDisplay);
+        document.getElementById('allo_dose').addEventListener('input', calculateAndDisplay);
+        document.getElementById('sua').addEventListener('input', calculateAndDisplay);
+
+        // Calculate and display initial results
+        calculateAndDisplay();
+    </script>
+</body>
+</html>
